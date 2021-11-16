@@ -1,0 +1,4 @@
+export const GET_GENRE_START = "GET_GENRE_START";
+export const GET_GENRE_END = "GET_GENRE_END";
+export const GET_GENRE_SUCCESS = "GET_GENRE_SUCCESS";
+export const GET_GENRE_FAILURE = "GET_GENRE_FAILURE";

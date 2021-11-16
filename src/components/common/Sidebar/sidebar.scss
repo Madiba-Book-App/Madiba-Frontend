@@ -1,0 +1,120 @@
+.slider {
+  .sider-class {
+    background-color: #01579b;
+    color: #fff !important;
+    width: 105%;
+  }
+
+  .ant-menu-item a {
+    color: #fff !important;
+  }
+
+  .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-left: 5px solid rgba(0, 0, 0, 0.4);
+  }
+
+  .side-text {
+    margin-left: 15px !important;
+  }
+
+  .menu-side {
+    margin-top: 70px;
+  }
+
+  .footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    margin-left: 25px;
+  }
+
+  .footer p {
+    padding: 8px 8px;
+  }
+
+  .divider-footer {
+    width: 40px;
+  }
+
+  .container-img-text {
+    margin-top: 10px;
+    padding: 5px 5px 35px 5px;
+    text-align: center;
+  }
+
+  .text-sidebar {
+    font-size: 25px;
+  }
+
+  .sidebar-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50px;
+    -webkit-border-radius: 50px;
+    -moz-border-radius: 50px;
+    -ms-border-radius: 50px;
+    -o-border-radius: 50px;
+  }
+
+  .line {
+    height: 8px;
+    background: #adadad;
+    background: -moz-linear-gradient(
+      left,
+      #ed2817 0%,
+      #ed2817 30%,
+      #fcc312 30%,
+      #fcc312 60%,
+      #008100 60%,
+      #008100 100%
+    );
+    background: -webkit-gradient(
+      linear,
+      left top,
+      right top,
+      color-stop(0%, #ed2817),
+      color-stop(30%, #ed2817),
+      color-stop(30%, #fcc312),
+      color-stop(60%, #fcc312),
+      color-stop(60%, #008100),
+      color-stop(100%, #008100)
+    );
+    background: -webkit-linear-gradient(
+      left,
+      #ed2817 0%,
+      #ed2817 30%,
+      #fcc312 30%,
+      #fcc312 60%,
+      #008100 60%,
+      #008100 100%
+    );
+    background: -o-linear-gradient(
+      left,
+      #ed2817 0%,
+      #ed2817 30%,
+      #fcc312 30%,
+      #fcc312 60%,
+      #008100 60%,
+      #008100 100%
+    );
+    background: -ms-linear-gradient(
+      left,
+      #ed2817 0%,
+      #ed2817 30%,
+      #fcc312 30%,
+      #fcc312 60%,
+      #008100 60%,
+      #008100 100%
+    );
+    background: linear-gradient(
+      to right,
+      #ed2817 0%,
+      #ed2817 30%,
+      #fcc312 30%,
+      #fcc312 60%,
+      #008100 60%,
+      #008100 100%
+    );
+  }
+}
