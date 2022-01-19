@@ -23,4 +23,9 @@ module.exports = {
     message: "",
     errors: {},
   },
+  users: {
+    loading: false,
+    message: "",
+    errors: {},
+  },
 };

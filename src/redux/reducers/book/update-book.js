@@ -16,7 +16,7 @@ export default (state, { type, payload }) => {
     case bookActionsTypes.EDIT_BOOK_END:
       return {
         ...state,
-        eidtBook: { ...state.editBook, loading: false },
+        editBook: { ...state.editBook, loading: false },
       };
     case bookActionsTypes.EDIT_BOOK_SUCCESS:
       return {

@@ -1,36 +1,37 @@
-import { bookActionsTypes } from "redux/action-types";
+import { userActionsTypes } from "redux/action-types";
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default (state, { type, payload }) => {
   switch (type) {
-    case bookActionsTypes.DELETE_BOOK_START:
+    case userActionsTypes.GET_USERS_START:
       return {
         ...state,
-        deleteBook: {
-          ...state.deleteBook,
+        users: {
+          ...state.users,
           message: "",
           loading: true,
           errors: {},
         },
       };
-    case bookActionsTypes.DELETE_BOOK_END:
+    case userActionsTypes.GET_USERS_END:
       return {
         ...state,
-        deleteBook: { ...state.deleteBook, loading: true },
+        users: { ...state.users, loading: false },
       };
-    case bookActionsTypes.DELETE_BOOK_SUCCESS:
+    case userActionsTypes.GET_USERS_SUCCESS:
       return {
         ...state,
-        deleteBook: {
+        listOfUsers: payload,
+        users: {
           loading: false,
           message: payload.message,
           errors: {},
         },
       };
-    case bookActionsTypes.DELETE_BOOK_FAILURE:
+    case userActionsTypes.GET_USERS_FAILURE:
       return {
         ...state,
-        deleteBook: {
+        users: {
           loading: false,
           message: "",
           errors: payload.errors,

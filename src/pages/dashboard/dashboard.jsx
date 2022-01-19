@@ -5,8 +5,12 @@ import { connect } from "react-redux";
 import Sidebar from "components/common/Sidebar/sidebar.jsx";
 import Navbar from "components/common/Header/header.jsx";
 import ViewBooks from "components/dashboard/book/view";
+import ViewEvent from "components/dashboard/event/listEvents";
 import CreateBook from "components/dashboard/book/createBook";
+import CreateEvent from "components/dashboard/event/createEvent";
 import EditBookComponent from "components/dashboard/book/editBook";
+import ViewUsers from "components/dashboard/users/view";
+import EditEventComponent from "components/dashboard/event/editEvent";
 
 import "./dashboard.scss";
 
@@ -30,6 +34,14 @@ const Dashboard = ({ match }) => {
                 <CreateBook />
               ) : path === "/book/:id" ? (
                 <EditBookComponent />
+              ) : path === "/users" ? (
+                <ViewUsers />
+              ) : path === "/events" ? (
+                <ViewEvent />
+              ) : path === "/create-event" ? (
+                <CreateEvent />
+              ) : path === "/event/:id" ? (
+                <EditEventComponent />
               ) : (
                 ""
               )}

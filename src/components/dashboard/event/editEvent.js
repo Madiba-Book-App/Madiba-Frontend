@@ -5,57 +5,66 @@ import {
   Col,
   Form,
   Input,
-  Select,
   Button,
   Upload,
   Alert,
   message,
+  TimePicker,
   Image,
   Spin,
+  DatePicker,
 } from "antd";
 import { ArrowLeftOutlined, UploadOutlined } from "@ant-design/icons";
+import moment from "moment";
 
 import { compose } from "redux";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 
-import { EditBook } from "redux/actions/book/Update";
-import getOne from "redux/actions/book/getOne";
-import GetGenres from "redux/actions/genre/Get";
+import { EditEvent } from "redux/actions/event/update";
+import getOne from "redux/actions/event/getOne";
 import CustomButton from "../../common/Button/button.jsx";
-import clearBookstore from "redux/actions/book/clearStore";
-import "./books.scss";
+import clearEventstore from "redux/actions/event/clearStore";
+import "./event.scss";
 
-const { Option } = Select;
+const dateFormat = "YYYY/MM/DD";
 
-class EditBookComponent extends Component {
+class EditEventComponent extends Component {
   state = {
-    bookImage: "",
-    book: [],
+    eventImage: "",
+    event: [],
     loading: false,
-    genres: [],
-    loadingBook: false,
+    loadingEvent: false,
     message: "",
-    genreId: "",
     errors: [],
+    time: "",
+    date: "",
   };
 
   componentDidMount() {
-    const { getOne, GetGenres } = this.props;
-    GetGenres();
+    const { getOne } = this.props;
     getOne(this.props.match.params.id);
   }
 
   componentWillUnmount = () => {
-    const { clearBookstore } = this.props;
-    clearBookstore();
+    const { clearEventstore } = this.props;
+    clearEventstore();
+  };
+
+  onChange = (_, timeString) => {
+    this.setState(() => ({
+      time: timeString,
+    }));
+  };
+
+  onChangeDate = (data) => {
+    this.setState({ date: new Date(data) });
   };
 
   static getDerivedStateFromProps(props) {
     return {
-      book: props?.getOneBook.book,
-      genres: props?.getlistOfGenres.genre,
-      loadingBook: props?.loadingBook,
+      event: props?.getOneEvent.event,
+      loadingEvent: props?.loadingEvent,
       loading: props?.loading,
       message: props?.message,
       errors: props?.errors,
@@ -66,50 +75,43 @@ class EditBookComponent extends Component {
     if (this.state.message) {
       message.success(this.state.message, 3);
       setTimeout(() => {
-        this.props.history.push("/books");
+        this.props.history.push("/events");
         // eslint-disable-next-line no-restricted-globals
       }, 3000);
     }
   }
 
   render() {
-    const { genres, loading, errors, book, loadingBook, genreId } = this.state;
+    const { loading, errors, event, loadingBook, time, date } = this.state;
 
     const onFinish = (values) => {
       const formData = new FormData();
 
-      if (values.genreId === undefined) {
-        formData.append("title", values.title);
-        formData.append("language", values.language);
-        formData.append("description", values.description);
-        formData.append("author", values.author);
-        formData.append("price", values.price);
-        formData.append("bookImage", this.state.bookImage);
+      formData.append("title", values.title);
+      formData.append("location", values.location);
+      formData.append("description", values.description);
+      formData.append("time", time);
+      formData.append("price", values.price);
+      formData.append("places", values.places);
+      formData.append(
+        "date",
+        date
+          ? moment(date).format("YYYY-MM-DD")
+          : moment(event?.date).format("YYYY-MM-DD")
+      );
+      formData.append("eventImage", this.state.eventImage);
 
-        // for (let data of formData.entries()) {
-        //   console.log(`Book ====>>>", ${data[0]},${data[1]}`);
-        // }
+      //   for (let data of formData.entries()) {
+      //     console.log(`Event ====>>>", ${data[0]},${data[1]}`);
+      //   }
 
-        const { EditBook } = this.props;
+      const { EditEvent } = this.props;
 
-        EditBook(formData, this.props.match.params.id);
-      } else {
-        formData.append("title", values.title);
-        formData.append("language", values.language);
-        formData.append("description", values.description);
-        formData.append("author", values.author);
-        formData.append("price", values.price);
-        formData.append("genreId", genreId);
-        formData.append("bookImage", this.state.bookImage);
-
-        const { EditBook } = this.props;
-
-        EditBook(formData, this.props.match.params.id);
-      }
+      EditEvent(formData, this.props.match.params.id);
     };
     return (
       <div className="books">
-        <Link to="/books">
+        <Link to="/events">
           <ArrowLeftOutlined /> Back
         </Link>
         <Row justify="center">
@@ -122,7 +124,7 @@ class EditBookComponent extends Component {
               </div>
             ) : (
               <>
-                <Image src={book?.bookImage} />
+                <Image src={event?.eventImage} />
                 <div className="sign-container">
                   <div className="auth-card">
                     <span className="label-style">Title</span>
@@ -130,49 +132,45 @@ class EditBookComponent extends Component {
                     <Form onFinish={onFinish}>
                       <Form.Item
                         name="title"
-                        initialValue={book?.title}
+                        initialValue={event?.title}
                         rules={[{ required: true }]}
                       >
                         <Input
                           name="title"
+                          values={event?.title}
                           type="text"
                           placeholder="Title"
                           className="input-style"
                           onChange={this.handleChange}
                         />
                       </Form.Item>
-                      <span className="label-style">Author</span>
+                      <span className="label-style">Location</span>
                       <Form.Item
                         // labelCol={{ span: 24 }}
                         // label="Password"
-                        name="author"
-                        initialValue={book?.author}
+                        name="location"
+                        initialValue={event?.location}
                         rules={[{ required: true }]}
                       >
                         <Input
-                          name="author"
-                          type="author"
-                          placeholder="Author"
-                          className="input-style"
-                          onChange={this.handleChange}
-                        />
-                      </Form.Item>
-                      <Form.Item
-                        name="language"
-                        initialValue={book?.language}
-                        rules={[{ required: true }]}
-                      >
-                        <Input
-                          name="language"
+                          name="location"
                           type="text"
-                          placeholder="Language"
+                          placeholder="Location"
                           className="input-style"
                           onChange={this.handleChange}
                         />
                       </Form.Item>
+                      <span className="label-style">Time</span>
+                      <TimePicker
+                        onChange={this.onChange}
+                        defaultValue={moment(event?.time, "HH:mm:ss")}
+                      />
+                      <br />
+                      <br />
+                      <span className="label-style">Price</span>
                       <Form.Item
                         name="price"
-                        initialValue={book?.price}
+                        initialValue={event?.price}
                         rules={[{ required: true }]}
                       >
                         <Input
@@ -183,24 +181,32 @@ class EditBookComponent extends Component {
                           onChange={this.handleChange}
                         />
                       </Form.Item>
-                      <Select
-                        onChange={(value) => this.setState({ genreId: value })}
-                        defaultValue={` ${book?.genre.name} - ${book?.genre.range} `}
-                        placeholder="Select Genre"
+                      <span className="label-style">Available seats</span>
+                      <Form.Item
+                        name="places"
+                        initialValue={event?.places}
+                        rules={[{ required: true }]}
                       >
-                        {genres?.map((option) => {
-                          return (
-                            <Option key={option.id} value={option.id}>
-                              {option.name}, {option.range}
-                            </Option>
-                          );
-                        })}
-                      </Select>
+                        <Input
+                          name="places"
+                          type="text"
+                          placeholder="Places"
+                          className="input-style"
+                          onChange={this.handleChange}
+                        />
+                      </Form.Item>
+                      <span className="label-style">Date</span>
+                      <DatePicker
+                        defaultValue={moment(event?.date, dateFormat)}
+                        format={dateFormat}
+                        className="date-picker"
+                        onChange={this.onChangeDate}
+                      />
                       <br />
                       <br />
                       <Form.Item
                         name="description"
-                        initialValue={book?.description}
+                        initialValue={event?.description}
                         rules={[{ required: true }]}
                       >
                         <Input.TextArea placeholder="description" />
@@ -231,12 +237,12 @@ class EditBookComponent extends Component {
                           }}
                           onChange={({ fileList: newFileList }) =>
                             this.setState({
-                              bookImage: newFileList[0]?.originFileObj,
+                              eventImage: newFileList[0]?.originFileObj,
                             })
                           }
                         >
                           <Button icon={<UploadOutlined />}>
-                            Add Book Image
+                            Add Event Image
                           </Button>
                         </Upload>
                       </Form.Item>
@@ -266,16 +272,14 @@ class EditBookComponent extends Component {
 }
 
 const mapStateToProps = ({
-  genre: { getlistOfGenres },
-  book: {
-    editBook: { errors, message, loading },
-    getBook: { loading: loadingBook },
-    getOneBook,
+  event: {
+    editEvent: { errors, message, loading },
+    getEvent: { loading: loadingEvent },
+    getOneEvent,
   },
 }) => ({
-  getlistOfGenres,
-  loadingBook,
-  getOneBook,
+  loadingEvent,
+  getOneEvent,
   loading,
   errors,
   message,
@@ -283,5 +287,5 @@ const mapStateToProps = ({
 
 export default compose(
   withRouter,
-  connect(mapStateToProps, { GetGenres, EditBook, getOne, clearBookstore })
-)(EditBookComponent);
+  connect(mapStateToProps, { EditEvent, getOne, clearEventstore })
+)(EditEventComponent);

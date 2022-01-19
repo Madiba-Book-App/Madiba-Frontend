@@ -5,89 +5,89 @@ import {
   Col,
   Form,
   Input,
-  Select,
   Button,
   Upload,
   Alert,
   message,
+  TimePicker,
+  DatePicker,
 } from "antd";
 import { ArrowLeftOutlined, UploadOutlined } from "@ant-design/icons";
+import moment from "moment";
 
 import { compose } from "redux";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 
-import { CreateBooks } from "redux/actions/book/Create";
-import GetGenres from "redux/actions/genre/Get";
+import { CreateEvents } from "redux/actions/event/create";
 import CustomButton from "../../common/Button/button.jsx";
-import clearBookstore from "redux/actions/book/clearStore";
-import "./books.scss";
+import clearEventstore from "redux/actions/event/clearStore";
+import "./event.scss";
 
-const { Option } = Select;
+const dateFormat = "YYYY/MM/DD";
 
-class CreateBook extends Component {
+class CreateEvent extends Component {
   state = {
-    bookImage: "",
+    eventImage: "",
     book: "",
     loading: false,
-    genres: [],
+    time: "",
     message: "",
     errors: [],
   };
 
-  componentDidMount() {
-    const { GetGenres } = this.props;
-    GetGenres();
-  }
-
   static getDerivedStateFromProps(props) {
     return {
-      genres: props?.getlistOfGenres.genre,
       loading: props?.loading,
       message: props?.message,
       errors: props?.errors,
     };
   }
 
-  componentWillUnmount = () => {
-    const { clearBookstore } = this.props;
-    clearBookstore();
+  onChange = (_, timeString) => {
+    this.setState(() => ({
+      time: timeString,
+    }));
   };
 
   componentDidUpdate() {
+    const { clearEventstore } = this.props;
     if (this.state.message) {
       message.success(this.state.message, 3);
       setTimeout(() => {
-        this.props.history.push("/books");
+        this.props.history.push("/events");
         // eslint-disable-next-line no-restricted-globals
       }, 3000);
+      clearEventstore();
     }
   }
 
   render() {
-    const { genres, loading, errors } = this.state;
+    const { loading, errors, time } = this.state;
 
     const onFinish = (values) => {
+      const getDate = new Date(values.date);
       const formData = new FormData();
 
       formData.append("title", values.title);
-      formData.append("language", values.language);
+      formData.append("time", time);
       formData.append("description", values.description);
-      formData.append("author", values.author);
+      formData.append("location", values.location);
       formData.append("price", values.price);
-      formData.append("genreId", values.genreId);
-      formData.append("bookImage", this.state.bookImage);
+      formData.append("places", values.places);
+      formData.append("date", moment(getDate).format("YYYY-MM-DD"));
+      formData.append("eventImage", this.state.eventImage);
 
       //   for (let data of formData.entries()) {
       //     console.log(`Book ====>>>", ${data[0]},${data[1]}`);
       //   }
 
-      const { CreateBooks } = this.props;
-      CreateBooks(formData);
+      const { CreateEvents } = this.props;
+      CreateEvents(formData);
     };
     return (
       <div className="books">
-        <Link to="/books">
+        <Link to="/events">
           <ArrowLeftOutlined /> Back
         </Link>
         <Row justify="center">
@@ -107,31 +107,28 @@ class CreateBook extends Component {
                       onChange={this.handleChange}
                     />
                   </Form.Item>
-                  <span className="label-style">Author</span>
+                  <span className="label-style">Location</span>
                   <Form.Item
                     // labelCol={{ span: 24 }}
                     // label="Password"
-                    name="author"
+                    name="location"
                     rules={[{ required: true }]}
                   >
                     <Input
-                      name="author"
-                      type="author"
-                      placeholder="Author"
+                      name="location"
+                      type="location"
+                      placeholder="Location"
                       className="input-style"
                       onChange={this.handleChange}
                     />
                   </Form.Item>
-                  <span className="label-style">Language</span>
-                  <Form.Item name="language" rules={[{ required: true }]}>
-                    <Input
-                      name="language"
-                      type="text"
-                      placeholder="Language"
-                      className="input-style"
-                      onChange={this.handleChange}
-                    />
-                  </Form.Item>
+                  <span className="label-style">Time</span>
+                  <TimePicker
+                    onChange={this.onChange}
+                    defaultValue={moment("00:00:00", "HH:mm:ss")}
+                  />
+                  <br />
+                  <br />
                   <span className="label-style">Price</span>
                   <Form.Item name="price" rules={[{ required: true }]}>
                     <Input
@@ -142,18 +139,23 @@ class CreateBook extends Component {
                       onChange={this.handleChange}
                     />
                   </Form.Item>
-                  <span className="label-style">Select Genre</span>
-                  <Form.Item
-                    name="genreId"
-                    rules={[{ required: true, message: "Genre is required" }]}
-                  >
-                    <Select placeholder="Select Genre">
-                      {genres?.map((option) => (
-                        <Option key={option.id} value={option.id}>
-                          {option.name}, {option.range}
-                        </Option>
-                      ))}
-                    </Select>
+                  <span className="label-style">Available Seats</span>
+                  <Form.Item name="places" rules={[{ required: true }]}>
+                    <Input
+                      name="places"
+                      type="text"
+                      placeholder="Number of Place"
+                      className="input-style"
+                      onChange={this.handleChange}
+                    />
+                  </Form.Item>
+                  <span className="label-style">Date</span>
+                  <Form.Item name="date">
+                    <DatePicker
+                      initialValues={moment()}
+                      format={dateFormat}
+                      className="date-picker"
+                    />
                   </Form.Item>
                   <span className="label-style">Description</span>
                   <Form.Item name="description" rules={[{ required: true }]}>
@@ -185,11 +187,11 @@ class CreateBook extends Component {
                       }}
                       onChange={({ fileList: newFileList }) =>
                         this.setState({
-                          bookImage: newFileList[0]?.originFileObj,
+                          eventImage: newFileList[0]?.originFileObj,
                         })
                       }
                     >
-                      <Button icon={<UploadOutlined />}>Add Book Image</Button>
+                      <Button icon={<UploadOutlined />}>Add Event Image</Button>
                     </Upload>
                   </Form.Item>
                   <Form.Item>
@@ -216,12 +218,10 @@ class CreateBook extends Component {
 }
 
 const mapStateToProps = ({
-  genre: { getlistOfGenres },
-  book: {
-    createBook: { errors, message, loading },
+  event: {
+    createEvent: { errors, message, loading },
   },
 }) => ({
-  getlistOfGenres,
   loading,
   errors,
   message,
@@ -229,5 +229,5 @@ const mapStateToProps = ({
 
 export default compose(
   withRouter,
-  connect(mapStateToProps, { GetGenres, CreateBooks, clearBookstore })
-)(CreateBook);
+  connect(mapStateToProps, { CreateEvents, clearEventstore })
+)(CreateEvent);

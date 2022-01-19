@@ -32,7 +32,7 @@
     font-size: 15px;
   }
 
-  .event-details {
+  .book-details {
     font-size: 13px;
   }
 
@@ -60,5 +60,26 @@
     text-align: center;
     background: rgba(0, 0, 0, 0.05);
     border-radius: 4px;
+  }
+
+  .ant-picker {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    color: rgba(0, 0, 0, 0.85);
+    font-size: 14px;
+    font-variant: tabular-nums;
+    line-height: 1.5715;
+    list-style: none;
+    font-feature-settings: "tnum", "tnum";
+    padding: 4px 11px 4px;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #d9d9d9;
+    border-radius: 2px;
+    transition: border 0.3s, box-shadow 0.3s;
+    width: 100%;
   }
 }

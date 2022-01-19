@@ -3,17 +3,18 @@ import { Row, Col, Spin, Card, Popconfirm, message } from "antd";
 import { connect } from "react-redux";
 import { withRouter, Link } from "react-router-dom";
 import { compose } from "redux";
+import moment from "moment";
 
 import CustomButton from "../../common/Button/button.jsx";
-import GetBooks from "redux/actions/book/Get";
-import clearBookstore from "redux/actions/book/clearStore";
-import deleteBook from "redux/actions/book/delete";
+import GetEvents from "redux/actions/event/getAll";
+import deleteEvent from "redux/actions/event/delete";
+import clearEventstore from "redux/actions/event/clearStore";
 
-import "./books.scss";
+import "./event.scss";
 
-class ListBook extends Component {
+class ListEvent extends Component {
   state = {
-    listOfBooks: [],
+    listOfEvents: [],
     loading: false,
     errors: {},
     messageDelete: "",
@@ -21,48 +22,45 @@ class ListBook extends Component {
   };
 
   componentDidMount() {
-    const { GetBooks } = this.props;
-    GetBooks();
+    const { GetEvents } = this.props;
+    GetEvents();
   }
 
   static getDerivedStateFromProps(props) {
     return {
-      listOfBooks: props.getlistOfBooks.books,
+      listOfEvents: props.getlistOfEvents.events,
       messageDelete: props?.messageDelete,
       loadingDelete: props?.loadingDelete,
       loading: props?.loading,
       errors: props?.errors,
     };
   }
-  confirm = (e) => {
-    const { deleteBook } = this.props;
-    deleteBook(e);
-  };
+  confirm(e) {
+    const { deleteEvent } = this.props;
+    deleteEvent(e);
+  }
 
   componentDidUpdate() {
-    const { GetBooks, clearBookstore } = this.props;
-
+    const { GetEvents, clearEventstore } = this.props;
     if (this.state.messageDelete) {
       message.success(this.state.messageDelete, 3);
       setTimeout(() => {
+        GetEvents();
         // eslint-disable-next-line no-restricted-globals
-        GetBooks();
       }, 2000);
-      clearBookstore();
+      clearEventstore();
     }
   }
 
   render() {
-    const { loading, listOfBooks, loadingDelete } = this.state;
-
-    console.log(`loadingDelete`, listOfBooks);
+    const { loading, listOfEvents, loadingDelete } = this.state;
 
     return (
       <div className="books">
         <Row>
           <Col span={8}>
             <div className="div-create">
-              <Link to="/create-book">
+              <Link to="/create-event">
                 <CustomButton htmlType="submit" className="width-btn">
                   CREATE
                 </CustomButton>
@@ -80,13 +78,13 @@ class ListBook extends Component {
           <div className="example">
             <Spin />
           </div>
-        ) : listOfBooks === undefined ? (
-          <p className="text-centered">No books available, please create</p>
+        ) : listOfEvents === undefined ? (
+          <p className="text-centered">No Events available, please create</p>
         ) : (
           <Row>
-            {listOfBooks?.map((book) => {
+            {listOfEvents?.map((event) => {
               return (
-                <Col key={book.id} span={6}>
+                <Col key={event.id} span={6}>
                   <Card
                     hoverable
                     style={{
@@ -97,11 +95,11 @@ class ListBook extends Component {
                       <img
                         style={{ width: "100%", height: "250px" }}
                         alt="example"
-                        src={book?.bookImage}
+                        src={event?.eventImage}
                       />
                     }
                     actions={[
-                      <Link to={`/book/${book.id}`}>
+                      <Link to={`/event/${event.id}`}>
                         <CustomButton
                           htmlType="submit"
                           className="width-btn-update"
@@ -110,8 +108,8 @@ class ListBook extends Component {
                         </CustomButton>
                       </Link>,
                       <Popconfirm
-                        title="Are you sure you want to delete this book?"
-                        onConfirm={() => this.confirm(book.id)}
+                        title="Are you sure you want to delete this event?"
+                        onConfirm={() => this.confirm(event.id)}
                         okButtonProps={{ loading: loadingDelete }}
                         okText="Yes"
                       >
@@ -125,50 +123,41 @@ class ListBook extends Component {
                     ]}
                   >
                     <p>
-                      author:{" "}
-                      <span className="book-details">{book?.author}</span>
-                    </p>
-                    <p>
-                      title: <span className="book-details">{book?.title}</span>
+                      title:{" "}
+                      <span className="event-details">{event?.title}</span>
                     </p>
                     <p>
                       description:{" "}
-                      <span className="book-details">{book?.description}</span>
-                    </p>
-                    <p>
-                      price: <span className="book-details">{book.price}</span>
-                    </p>
-                    <p>
-                      genre:{" "}
-                      <span
-                        className={
-                          book.genre?.name === "Adults"
-                            ? "adult"
-                            : book.genre?.name === "Kids"
-                            ? "kids"
-                            : "teen"
-                        }
-                      >
-                        {book.genre?.name}
+                      <span className="event-details">
+                        {event?.description}
                       </span>
                     </p>
                     <p>
-                      range:{" "}
-                      <span
-                        className={
-                          book.genre?.name === "Adults"
-                            ? "adult"
-                            : book.genre?.name === "Kids"
-                            ? "kids"
-                            : "teen"
-                        }
-                      >
-                        {book.genre?.range}
-                      </span>
+                      Location:{" "}
+                      <span className="event-details">{event?.location}</span>
                     </p>
                     <p>
-                      language:{" "}
-                      <span className="book-details">{book?.language}</span>
+                      price:{" "}
+                      <span className="event-details">{event.price}</span>
+                    </p>
+
+                    <p>
+                      places:{" "}
+                      <span className="event-details">{event.places}</span>
+                    </p>
+
+                    <p>
+                      price:{" "}
+                      <span className="event-details">{event?.price}</span>
+                    </p>
+                    <p>
+                      time: <span className="event-details">{event?.time}</span>
+                    </p>
+                    <p>
+                      Date:{" "}
+                      <span className="event-details">
+                        {moment(event?.date).format("MMM Do YYYY")}
+                      </span>
                     </p>
                   </Card>
                 </Col>
@@ -182,13 +171,13 @@ class ListBook extends Component {
 }
 
 const mapStateToProps = ({
-  book: {
-    getlistOfBooks,
-    getBooks: { errors, message, loading },
-    deleteBook: { loading: loadingDelete, message: messageDelete },
+  event: {
+    getlistOfEvents,
+    getEvents: { errors, message, loading },
+    deleteEvent: { loading: loadingDelete, message: messageDelete },
   },
 }) => ({
-  getlistOfBooks,
+  getlistOfEvents,
   errors,
   message,
   loading,
@@ -198,5 +187,5 @@ const mapStateToProps = ({
 
 export default compose(
   withRouter,
-  connect(mapStateToProps, { GetBooks, deleteBook, clearBookstore })
-)(ListBook);
+  connect(mapStateToProps, { GetEvents, deleteEvent, clearEventstore })
+)(ListEvent);
